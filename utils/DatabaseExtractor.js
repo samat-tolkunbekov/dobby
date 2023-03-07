@@ -21,10 +21,10 @@ function sleep(time) {
     });
 }
 
-function prepareServices(name, dbData) {
-    let disabledServices = {};
-    let updatedServices = [];
-    let enabledServices = {
+function prepareQueries(name, dbData) {
+    let disabledProducts = {};
+    let updatedProducts = [];
+    let enabledProducts = {
         ...dbData.productsC,
         ...dbData.productsB,
         ...dbData.productsA,
@@ -48,36 +48,36 @@ function prepareServices(name, dbData) {
 
     console.log('\n')
     console.log('----- ALL PRODUCTS -----');
-    console.log(enabledServices);
+    console.log(enabledProducts);
 
-    for (const service in enabledServices) {
-        if (!enabledServices[service]) {
-            disabledServices[service] = enabledServices[service];
+    for (const service in enabledProducts) {
+        if (!enabledProducts[service]) {
+            disabledProducts[service] = enabledProducts[service];
 
-            delete enabledServices[service];
+            delete enabledProducts[service];
         }
     }
 
     console.log('----- DISABLED PRODUCTS -----');
-    console.log(disabledServices);
-    console.log(Object.keys(disabledServices));
+    console.log(disabledProducts);
+    console.log(Object.keys(disabledProducts));
 
     dbData.name.stored = dbData.productsD;
 
     let productsD = dbData.productsD.filter(service => {
-        return !(service in disabledServices);
+        return !(service in disabledProducts);
     });
 
     console.log('----- UPDATED PRODUCTS -----');
-    console.log(updatedServices);
+    console.log(updatedProducts);
 
     if (dbData.isDBackedUp) {
         dbData.name.hitChecker = true;
 
-        enabledServices['57'] = true;
+        enabledProducts['57'] = true;
     }
 
-    enabledServices = Object.keys(enabledServices)
+    enabledProducts = Object.keys(enabledProducts)
         .filter(service => {
             return !productsD.includes(Number(service)) && !productsD.includes(service);
         })
@@ -86,22 +86,22 @@ function prepareServices(name, dbData) {
         });
 
     console.log('----- ENABLED FILTERED PRODUCTS -----');
-    console.log(enabledServices);
+    console.log(enabledProducts);
     console.log('----- STORED PRODUCTS -----');
     console.log(productsD);
 
     dbData.name.storedFiltered = productsD;
-    dbData.name.enabledServices = enabledServices;
+    dbData.name.enabledProducts = enabledProducts;
 
-    updatedServices.push(...productsD);
-    updatedServices.push(...enabledServices);
+    updatedProducts.push(...productsD);
+    updatedProducts.push(...enabledProducts);
 
     console.log('----- UPDATED PRODUCTS -----');
-    console.log(updatedServices);
+    console.log(updatedProducts);
 
     let filter = [];
 
-    updatedServices = updatedServices.filter(item => {
+    updatedProducts = updatedProducts.filter(item => {
         if (!filter.includes(item)) {
             filter.push(item);
 
@@ -110,15 +110,15 @@ function prepareServices(name, dbData) {
     });
 
     console.log('----- UPDATED FILTERED SERVICES -----');
-    console.log(updatedServices);
+    console.log(updatedProducts);
 
     QUERIES.push(
         `UPDATE
             other_${name}.columnA,
             other.columnA
         SET 
-            other_${name}.columnA.services = '${JSON.stringify(updatedServices)}',
-            other.columnA.services = '${JSON.stringify(updatedServices)}'
+            other_${name}.columnA.services = '${JSON.stringify(updatedProducts)}',
+            other.columnA.services = '${JSON.stringify(updatedProducts)}'
         WHERE
             other_${name}.columnA.id = other.columnA.id`
     );
@@ -153,7 +153,7 @@ async function getFProducts(name, dbData) {
             dbData.productsD = data;
             dbData.name.productsD = columnB;
 
-            prepareServices(name, dbData);
+            prepareQueries(name, dbData);
         })
         .on('end', async () => {
             connectionPool.end();
