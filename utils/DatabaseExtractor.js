@@ -74,7 +74,7 @@ function prepareQueries(name, dbData) {
     if (dbData.isDBackedUp) {
         dbData.name.hitChecker = true;
 
-        enabledProducts['57'] = true;
+        enabledProducts['6'] = true;
     }
 
     enabledProducts = Object.keys(enabledProducts)
@@ -207,7 +207,7 @@ async function getEProducts(name, dbData) {
             console.log('----- E SERVICES BACK-UP -----');
             console.log(logs.name);
             console.log(dbData.productsC);
-            console.log('----- E PROUDCTS BACK-UP -----');
+            console.log('----- E PRODUCTS BACK-UP -----');
             console.log(products);
         })
         .on('end', async () => {
@@ -272,7 +272,7 @@ async function getCProducts(name, dbData) {
             SELECT 
                 columnA, columnB
             FROM 
-                userActivityLogs
+                table
             WHERE
                 tableName = 'tableName'
                 AND columnA LIKE '%server-data-a%' 
